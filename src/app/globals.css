@@ -1,0 +1,107 @@
+@import "tailwindcss";
+
+/*
+  Design tokens — Section 10 of the approved UX & Design Specification.
+  Every color, shadow, radius, and easing curve used anywhere on the site
+  is declared here exactly once. Components reference these as Tailwind
+  utilities (bg-charcoal, shadow-hover, rounded-card, ease-signature) —
+  nothing gets a one-off hex value or magic number inline.
+*/
+@theme {
+  /* ---------- Color ---------- */
+  /* Deliberately NOT the "warm cream (#F4F1EA) + terracotta (#D97757)"
+     pairing that reads as an AI-generated default. This cream is cooler
+     and lighter, and the accent is a yellow-leaning brass/gold rather
+     than an orange-red clay — the two palettes don't collapse together. */
+  --color-cream: #f8f5ef; /* page background */
+  --color-beige: #f0eae0; /* card / surface background */
+  --color-beige-dark: #eae2d4; /* card + control hover surface */
+  --color-charcoal: #2a2622; /* primary text, footer background */
+  --color-charcoal-dark: #1d1a17; /* primary button hover fill */
+  --color-warm-gray: #5c5548; /* secondary text — ~6.8:1 on cream, passes WCAG AA */
+  --color-gold: #b8923d; /* decorative accent on LIGHT backgrounds; also the correct TEXT color on the dark footer (~5.1:1 against charcoal) */
+  --color-gold-dark: #7a5e1e; /* AA-safe TEXT variant on light backgrounds (~5.6:1 on cream) — never used on the dark footer, where it would be too muddy */
+  --color-hairline: #e4dccb; /* borders, dividers */
+
+  /* ---------- Typography ---------- */
+  /* CSS variables --font-inter / --font-playfair / --font-jetbrains-mono
+     are injected by next/font/google in layout.tsx — self-hosted, no
+     external font request at runtime. */
+  /* font-display (Playfair) marks the site's boldest statements: the hero
+     name, section titles, project card headlines, case study titles and
+     pull-quotes, and the footer's name + closing line. Still deliberate,
+     not default body text — but broader than the original "three places"
+     rule from before the Art Direction pass, which undersold how central
+     this typeface is to the site's voice. */
+  --font-display: var(--font-playfair), ui-serif, Georgia, serif;
+  --font-body: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains-mono), ui-monospace, "SFMono-Regular", monospace;
+
+  /* Fluid display SIZES (as opposed to the font-display FAMILY, which is
+     used more broadly — see below). text-display is the hero name, the
+     single boldest typographic moment on the site. text-h1 sits between
+     it and text-h2, used for case study page titles. text-h2 is the
+     homepage section-title size. Everything else uses Tailwind's default
+     scale, sized directly at the call site (e.g. project card headlines
+     use font-display text-2xl, not a dedicated token — they don't recur
+     often enough across the site to earn one). */
+  --text-display: clamp(3rem, 7vw + 1rem, 6rem);
+  --text-h1: clamp(2.5rem, 4vw + 1.5rem, 3.75rem);
+  --text-h2: clamp(2rem, 1.5vw + 1.5rem, 2.5rem);
+
+  /* ---------- Shape & elevation ---------- */
+  --radius-card: 0.75rem; /* the one radius value used everywhere */
+  --shadow-rest: 0 1px 2px rgba(42, 38, 34, 0.06);
+  --shadow-hover: 0 8px 24px rgba(42, 38, 34, 0.1);
+
+  /* ---------- Motion ---------- */
+  --ease-signature: cubic-bezier(0.16, 1, 0.3, 1); /* the one easing curve used site-wide */
+}
+
+@layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  ::selection {
+    background-color: var(--color-gold);
+    color: var(--color-charcoal);
+  }
+
+  /* Visible keyboard focus only — never triggered by a mouse click. */
+  :focus-visible {
+    outline: 2px solid var(--color-gold-dark);
+    outline-offset: 2px;
+  }
+}
+
+/*
+  Hard safety net for prefers-reduced-motion. The FadeIn component and
+  usePrefersReducedMotion hook already skip animation in JS, but this
+  media query guarantees nothing on the page moves even if a future
+  component forgets to check the hook.
+*/
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/*
+  Note: grain is no longer implemented as a CSS background-image here.
+  See src/components/ui/GrainTexture.tsx — it renders as a real SVG
+  element instead, which removes the intrinsic-sizing ambiguity a
+  data-URI background-image has with no explicit width/height on its
+  root <svg>.
+*/

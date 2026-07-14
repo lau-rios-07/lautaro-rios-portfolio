@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter, JetBrains_Mono, Playfair_Display } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
 import { Footer } from "@/components/layout/Footer";
 import { GrainOverlay } from "@/components/layout/GrainOverlay";
 import { Navigation } from "@/components/layout/Navigation";
@@ -100,6 +101,7 @@ export default function RootLayout({
         <main id="main-content">{children}</main>
         <Footer />
         <GrainOverlay />
+        <Analytics />
       </body>
     </html>
   );
